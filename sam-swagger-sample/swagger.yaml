@@ -1,0 +1,58 @@
+openapi: '3.0.1'
+
+info:
+  description: 'これはAWS SAMとSwaggerを使用したAPIGateway+LambdaのAPIサンプルです。'
+  version: '1.0.0'
+  title: 'SAM Swagger Sample'
+tags:
+  - name: 'sample-get'
+    description: 'sample-getではサンプルとして、Lambdaのevent, contextの内容をそのまま返却します。'
+  - name: 'sample-post-success'
+    description: 'sample-postではサンプルとして、POSTを受け取りLambdaのevent, contextの内容をそのまま返却します。'
+paths:
+  /sample-get:
+    get:
+      tags:
+        - 'sample-get'
+      summary: 'GETメソッドのサンプルです。'
+      description: 'Lambdaのevent, contextの内容を返却します。'
+      responses:
+        '200':
+          description: 'event,contextを返却します。'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/sampleResponse'
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${samSwaggerSampleGet.Arn}/invocations
+        httpMethod: 'POST'
+        type: 'aws_proxy'
+  /sample-post:
+    post:
+      tags:
+        - 'sample-post'
+      summary: 'POSTメソッドのサンプルです。'
+      description: 'Lambdaのevent, contextの内容を返却します。'
+      responses:
+        '200':
+          description: 'event,contextを返却します。'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/sampleResponse'
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${samSwaggerSamplePost.Arn}/invocations
+        httpMethod: 'POST'
+        type: 'aws_proxy'
+
+components:
+  schemas:
+    sampleResponse:
+      type: 'object'
+      properties:
+        event:
+          type: 'object'
+        context:
+          type: 'object'

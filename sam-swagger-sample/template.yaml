@@ -1,0 +1,48 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  sam-swagger-sample
+Transform:
+  - AWS::Serverless-2016-10-31
+
+Globals:
+  Function:
+    Runtime: nodejs14.x
+    Architectures:
+      - x86_64
+    MemorySize: 128
+    Timeout: 100
+
+Resources:
+  samSwaggerSampleApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: dev
+      DefinitionBody:
+        Fn::Transform:
+          Name: AWS::Include
+          Parameters:
+            Location: swagger.yaml
+
+  samSwaggerSampleGet:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/sample-get.getHandler
+      Events:
+        samSwaggerSampleApi:
+          Type: Api
+          Properties:
+            Path: /sample-get
+            Method: get
+            RestApiId: !Ref samSwaggerSampleApi
+
+  samSwaggerSamplePost:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/sample-post.postHandler
+      Events:
+        samSwaggerSampleApi:
+          Type: Api
+          Properties:
+            Path: /sample-post
+            Method: post
+            RestApiId: !Ref samSwaggerSampleApi
